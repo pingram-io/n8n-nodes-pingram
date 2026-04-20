@@ -17,9 +17,11 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 ## Operations
 
 ### SMS
+
 - **Send**: Send an SMS message to a phone number
 
 ### Email
+
 - **Send**: Send an email to an email address
 
 ## Credentials
@@ -33,11 +35,11 @@ To use this node, you need a Pingram API key:
 
 ### Supported Regions
 
-| Region | API Endpoint |
-|--------|--------------|
-| US (Default) | `https://api.pingram.io` |
-| Canada | `https://api.ca.pingram.io` |
-| EU | `https://api.eu.pingram.io` |
+| Region       | API Endpoint                 |
+| ------------ | ---------------------------- |
+| US (Default) | `https://api.pingram.io`     |
+| Canada       | `https://api.ca.pingram.io`  |
+| EU           | `https://api.eu.pingram.io`  |
 
 ## Usage
 
@@ -47,15 +49,19 @@ To use this node, you need a Pingram API key:
 2. Select **SMS** as the resource
 3. Select **Send** as the operation
 4. Enter the required fields:
-   - **User ID**: A unique identifier for the recipient (used for tracking)
    - **Phone Number**: The recipient's phone number in E.164 format (e.g., `+15005550006`)
    - **Message**: The SMS content
 
+Optional:
+
+- **Type**: Notification type ID for categorizing the send (defaults to `n8n` when empty)
+
 Example request body sent to Pingram API:
+
 ```json
 {
+  "type": "n8n",
   "to": {
-    "id": "user123",
     "number": "+15005550006"
   },
   "sms": {
@@ -70,22 +76,27 @@ Example request body sent to Pingram API:
 2. Select **Email** as the resource
 3. Select **Send** as the operation
 4. Enter the required fields:
-   - **User ID**: A unique identifier for the recipient (used for tracking)
    - **Email Address**: The recipient's email address
    - **Subject**: Email subject line
    - **HTML Body**: HTML content of the email
 
+Optional:
+
+- **Type**: Notification type ID for categorizing the send (defaults to `n8n` when empty)
+
 Optional fields (in Additional Fields):
+
 - **Sender Name**: Display name of the sender
 - **Sender Email**: Sender email address
 - **Preview Text**: Preview text shown in inbox
-- **Notification Type**: ID for categorizing notifications
+- **Notification Type**: Same as **Type** when the main field is empty (ID for categorizing notifications)
 
 Example request body sent to Pingram API:
+
 ```json
 {
+  "type": "n8n",
   "to": {
-    "id": "user123",
     "email": "user@example.com"
   },
   "email": {
