@@ -35,11 +35,11 @@ To use this node, you need a Pingram API key:
 
 ### Supported Regions
 
-| Region       | API Endpoint                 |
-| ------------ | ---------------------------- |
-| US (Default) | `https://api.pingram.io`     |
-| Canada       | `https://api.ca.pingram.io`  |
-| EU           | `https://api.eu.pingram.io`  |
+| Region       | API Endpoint                |
+| ------------ | --------------------------- |
+| US (Default) | `https://api.pingram.io`    |
+| Canada       | `https://api.ca.pingram.io` |
+| EU           | `https://api.eu.pingram.io` |
 
 ## Usage
 

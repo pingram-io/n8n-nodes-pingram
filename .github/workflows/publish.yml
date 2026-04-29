@@ -1,0 +1,53 @@
+# Publishes n8n-nodes-pingram to npm when a version tag is pushed.
+#
+# Required for n8n Creator Portal verification (GitHub Actions publish + provenance).
+# With npm Trusted Publishing, provenance is generated automatically for public repos.
+#
+# Prerequisites:
+# - npm: Trusted Publisher → GitHub Actions → owner pingram-io, repo n8n-nodes-pingram,
+#   workflow publish.yml (npmjs.com → package → Settings → Trusted publishing).
+# - Node ≥ 22.14 and npm ≥ 11.5.1 for OIDC trusted publishing (npm docs).
+#
+# Fallback: set NPM_AUTH_TOKEN or NPM_TOKEN (granular publish token) in repo Actions secrets.
+#
+# Tags must match vX.Y.Z (same as sync workflow from serverless).
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and lint
+        run: npm run build && npm run lint
+
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Publish to npm
+        id: publish
+        uses: JS-DevTools/npm-publish@v4
+        with:
+          provenance: true
+        env:
+          NODE_ENV: production
