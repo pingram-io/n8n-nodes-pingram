@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-pingram",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "n8n community node for Pingram - Send SMS and Email notifications",
   "keywords": [
     "n8n-community-node-package",
@@ -14,6 +14,7 @@
   "homepage": "https://github.com/pingram-io/n8n-nodes-pingram",
   "author": {
     "name": "Pingram",
+    "email": "hello@pingram.io",
     "url": "https://pingram.io"
   },
   "repository": {
