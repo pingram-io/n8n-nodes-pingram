@@ -3,16 +3,15 @@ import type {
   INodeExecutionData,
   INodeType,
   INodeTypeDescription,
-  IHttpRequestMethods,
   JsonObject
 } from 'n8n-workflow';
-import { NodeApiError } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionTypes } from 'n8n-workflow';
 
 export class Pingram implements INodeType {
   description: INodeTypeDescription = {
     displayName: 'Pingram',
     name: 'pingram',
-    icon: 'file:pingram.svg',
+    icon: { light: 'file:pingram.svg', dark: 'file:pingram.dark.svg' },
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
@@ -20,8 +19,9 @@ export class Pingram implements INodeType {
     defaults: {
       name: 'Pingram'
     },
-    inputs: ['main'],
-    outputs: ['main'],
+    usableAsTool: true,
+    inputs: [NodeConnectionTypes.Main],
+    outputs: [NodeConnectionTypes.Main],
     credentials: [
       {
         name: 'pingramApi',
@@ -36,12 +36,12 @@ export class Pingram implements INodeType {
         noDataExpression: true,
         options: [
           {
-            name: 'SMS',
-            value: 'sms'
-          },
-          {
             name: 'Email',
             value: 'email'
+          },
+          {
+            name: 'SMS',
+            value: 'sms'
           }
         ],
         default: 'sms'
@@ -70,7 +70,6 @@ export class Pingram implements INodeType {
         displayName: 'Type',
         name: 'type',
         type: 'string',
-        required: false,
         displayOptions: {
           show: {
             resource: ['sms', 'email'],
@@ -80,9 +79,8 @@ export class Pingram implements INodeType {
         default: '',
         placeholder: 'n8n, welcome, alert',
         description:
-          'Optional. Notification type ID for categorizing this send in Pingram (e.g. welcome vs. alert). When empty, the request uses "n8n".'
+          'Optional notification type ID for categorizing this send in Pingram (e.g. welcome vs. alert). When empty, the request uses "n8n".'
       },
-      // SMS Fields
       {
         displayName: 'Phone Number',
         name: 'phoneNumber',
@@ -134,7 +132,6 @@ export class Pingram implements INodeType {
           }
         ]
       },
-      // Email Fields
       {
         displayName: 'Email Address',
         name: 'emailAddress',
@@ -230,7 +227,6 @@ export class Pingram implements INodeType {
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData();
     const returnData: INodeExecutionData[] = [];
-    const resource = this.getNodeParameter('resource', 0) as string;
     const operation = this.getNodeParameter('operation', 0) as string;
     const credentials = await this.getCredentials('pingramApi');
 
@@ -247,6 +243,7 @@ export class Pingram implements INodeType {
     for (let i = 0; i < items.length; i++) {
       try {
         if (operation === 'send') {
+          const resource = this.getNodeParameter('resource', i) as string;
           const typeMain = (this.getNodeParameter('type', i) as string) ?? '';
 
           interface RequestBody {
@@ -327,16 +324,20 @@ export class Pingram implements INodeType {
             }
           }
 
-          const response = await this.helpers.httpRequest({
-            method: 'POST' as IHttpRequestMethods,
-            url: `${baseUrl}/send`,
-            headers: {
-              Authorization: `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json'
-            },
-            body,
-            json: true
-          });
+          const response =
+            await this.helpers.httpRequestWithAuthentication.call(
+              this,
+              'pingramApi',
+              {
+                method: 'POST',
+                url: `${baseUrl}/send`,
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body,
+                json: true
+              }
+            );
 
           returnData.push({
             json: response,

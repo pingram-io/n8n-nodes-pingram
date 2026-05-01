@@ -2,12 +2,20 @@ import type {
   IAuthenticateGeneric,
   ICredentialTestRequest,
   ICredentialType,
-  INodeProperties
+  INodeProperties,
+  IconFile
 } from 'n8n-workflow';
 
 export class PingramApi implements ICredentialType {
   name = 'pingramApi';
+
   displayName = 'Pingram API';
+
+  icon = {
+    light: 'file:../nodes/Pingram/pingram.svg',
+    dark: 'file:../nodes/Pingram/pingram.dark.svg'
+  } satisfies Record<'light' | 'dark', IconFile>;
+
   documentationUrl = 'https://pingram.io/docs';
   properties: INodeProperties[] = [
     {
