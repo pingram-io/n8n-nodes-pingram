@@ -6,8 +6,7 @@
 # Prerequisites:
 # - npm: Trusted Publisher → GitHub Actions → owner pingram-io, repo n8n-nodes-pingram,
 #   workflow publish.yml (npmjs.com → package → Settings → Trusted publishing).
-# - Node 22 LTS bundles a recent npm with provenance support. Avoid `npm install -g npm@latest`
-#   in CI—it has failed on ubuntu-latest with MODULE_NOT_FOUND (e.g. promise-retry).
+# - Node ≥ 22.14 and npm ≥ 11.5.1 for OIDC trusted publishing (npm docs).
 #
 # Fallback: set NPM_AUTH_TOKEN or NPM_TOKEN (granular publish token) in repo Actions secrets.
 #
@@ -19,6 +18,8 @@ on:
   push:
     tags:
       - 'v*.*.*'
+    branches:
+      - main
 
 permissions:
   id-token: write
@@ -33,7 +34,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
@@ -41,6 +42,9 @@ jobs:
 
       - name: Build and lint
         run: npm run build && npm run lint
+
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Publish to npm
         id: publish
