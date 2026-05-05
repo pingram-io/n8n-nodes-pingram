@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-pingram",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "n8n community node for Pingram - Send SMS and Email notifications",
   "keywords": [
     "n8n-community-node-package",
@@ -35,7 +35,8 @@
     "prepublishOnly": "n8n-node prerelease"
   },
   "files": [
-    "dist"
+    "dist/credentials",
+    "dist/nodes"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
@@ -56,8 +57,5 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
-  },
-  "overrides": {
-    "lodash": "^4.18.0"
   }
 }
